@@ -17,7 +17,8 @@ import { httpInterceptorProviders } from './_helpers/http.interceptor';
 import { AddTutorialComponent } from './add-tutorial/add-tutorial.component';
 import { TutorialDetailsComponent } from './tutorial-details/tutorial-details.component';
 import {TutorialsListComponent} from "./tutorial-list/tutorial-list.component";
-
+import { PaginationComponent } from './pagination/pagination.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,13 +31,15 @@ import {TutorialsListComponent} from "./tutorial-list/tutorial-list.component";
     BoardUserComponent,
     AddTutorialComponent,
     TutorialsListComponent,
-    TutorialDetailsComponent
+    TutorialDetailsComponent,
+    PaginationComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

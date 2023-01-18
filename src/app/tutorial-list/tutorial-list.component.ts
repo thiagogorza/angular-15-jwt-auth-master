@@ -9,10 +9,15 @@ import {TutorialService} from "../_services/tutorial.service";
 })
 export class TutorialsListComponent implements OnInit {
 
-  tutorials?: Tutorial[];
+  tutorials: Tutorial[] = [];
   currentTutorial: Tutorial = {};
   currentIndex = -1;
   title = '';
+
+  page = 1;
+  count = 0;
+  pageSize = 3;
+  pageSizes = [3, 6, 9];
 
   constructor(private tutorialService: TutorialService) { }
 
@@ -20,15 +25,50 @@ export class TutorialsListComponent implements OnInit {
     this.retrieveTutorials();
   }
 
+  getRequestParams(searchTitle: string, page: number, pageSize: number): any {
+    let params: any = {};
+
+    if (searchTitle) {
+      params[`title`] = searchTitle;
+    }
+
+    if (page) {
+      params[`page`] = page - 1;
+    }
+
+    if (pageSize) {
+      params[`size`] = pageSize;
+    }
+
+    return params;
+  }
+
   retrieveTutorials(): void {
-    this.tutorialService.getAll()
+    const params = this.getRequestParams(this.title, this.page, this.pageSize);
+
+    this.tutorialService.getAll(params)
       .subscribe({
         next: (data) => {
-          this.tutorials = data;
+          const { tutorials, totalItems } = data;
+          this.tutorials = tutorials;
+          this.count = totalItems;
           console.log(data);
         },
-        error: (e) => console.error(e)
+        error: (err) => {
+          console.log(err);
+        }
       });
+  }
+
+  handlePageChange(event: number): void {
+    this.page = event;
+    this.retrieveTutorials();
+  }
+
+  handlePageSizeChange(event: any): void {
+    this.pageSize = event.target.value;
+    this.page = 1;
+    this.retrieveTutorials();
   }
 
   refreshList(): void {
@@ -45,26 +85,20 @@ export class TutorialsListComponent implements OnInit {
   removeAllTutorials(): void {
     this.tutorialService.deleteAll()
       .subscribe({
-        next: (res) => {
+        next: res => {
           console.log(res);
           this.refreshList();
         },
-        error: (e) => console.error(e)
+        error: err => {
+          console.log(err);
+        }
       });
+
   }
 
   searchTitle(): void {
-    this.currentTutorial = {};
-    this.currentIndex = -1;
-
-    this.tutorialService.findByTitle(this.title)
-      .subscribe({
-        next: (data) => {
-          this.tutorials = data;
-          console.log(data);
-        },
-        error: (e) => console.error(e)
-      });
+    this.page = 1;
+    this.retrieveTutorials();
   }
 
 }
