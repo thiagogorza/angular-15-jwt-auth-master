@@ -8,7 +8,6 @@ import { EventData } from './event.class';
 })
 export class EventBusService {
   private subject$ = new Subject<EventData>();
-
   emit(event: EventData) {
     this.subject$.next(event);
   }
